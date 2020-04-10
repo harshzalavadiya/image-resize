@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "pwa-query-params-issue",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,8 +8,13 @@
     "start": "next start"
   },
   "dependencies": {
+    "blueimp-load-image": "^2.31.0",
+    "exifr": "^4.3.5",
     "next": "9.3.4",
+    "next-pwa": "^2.3.3",
     "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "react-dom": "16.13.1",
+    "react-dropzone": "^10.2.2",
+    "react-tooltip": "^4.2.1"
   }
 }
