@@ -31,7 +31,10 @@ const Resizer = () => {
           //   if (data.imageHead && data.exif) {
           // Reset Exif Orientation data:
           try {
-            // loadImage.writeExifData(data.imageHead, data, "Orientation", 1);
+            console.log(data);
+            if (data.exif && data.exif[274]) {
+              loadImage.writeExifData(data.imageHead, data, "Orientation", 1);
+            }
             img.toBlob(function (blob) {
               try {
                 loadImage.replaceHead(blob, data.imageHead, function (newBlob) {
