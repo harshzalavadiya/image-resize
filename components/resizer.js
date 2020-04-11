@@ -49,7 +49,7 @@ const Resizer = () => {
           }
           //   }
         },
-        { meta: true, orientation: true, maxWidth: 200 }
+        { meta: true, canvas: true, orientation: true, maxWidth: 200 }
       );
     });
     return blob;
