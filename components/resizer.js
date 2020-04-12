@@ -1,67 +1,25 @@
-import loadImage from "blueimp-load-image";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { parse } from "exifr";
 import ReactTooltip from "react-tooltip";
 
-async function asyncForEach(array, callback) {
-  for (let index = 0; index < array.length; index++) {
-    await callback(array[index], index, array);
-  }
-}
+import { resizeMultiple } from "./resize";
 
 const Resizer = () => {
   const [urlz, setUrlz] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const onDrop = async (acceptedFiles) => {
-    let urls = [];
-    await asyncForEach(acceptedFiles, async (af) => {
-      const blobUrl = await resize(af);
-      urls.push(blobUrl);
-    });
-    console.log("done", urls);
-    setUrlz([...urlz, ...urls]);
+    setIsLoading(true);
+    const all = await resizeMultiple(acceptedFiles);
+    setUrlz([...urlz, ...all]);
+    setIsLoading(false);
   };
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
-  const resize = async (file) => {
-    const blob = await new Promise((resolve) => {
-      loadImage(
-        file,
-        function (img, data) {
-          //   if (data.imageHead && data.exif) {
-          // Reset Exif Orientation data:
-          try {
-            console.log(data);
-            if (data.exif && data.exif[274]) {
-              loadImage.writeExifData(data.imageHead, data, "Orientation", 1);
-            }
-            img.toBlob(function (blob) {
-              try {
-                loadImage.replaceHead(blob, data.imageHead, function (newBlob) {
-                  parse(newBlob).then((metadata) => {
-                    resolve([URL.createObjectURL(newBlob), metadata || {}]);
-                  });
-                  // do something with newBlob
-                });
-              } catch (e) {
-                resolve([URL.createObjectURL(blob), {}]);
-              }
-            }, file.type);
-          } catch (ex) {
-            console.log(ex);
-          }
-          //   }
-        },
-        { meta: true, canvas: true, orientation: true, maxWidth: 200 }
-      );
-    });
-    return blob;
-  };
-
   return (
     <div>
-      <h1>🖼️ PoC in-browser image resize preserving EXIF ⚡</h1>
+      <h1>🖼️ PoC in-browser image resize preserving EXIF (update 1) ⚡</h1>
       <h3>💡 Click on image thumbnail to view EXIF of resized image</h3>
+      {isLoading && <div>Loading...</div>}
       <div className="dropzone" {...getRootProps()}>
         <input {...getInputProps()} />
         <p>Drag 'n' drop some files here, or click to select files</p>
@@ -91,7 +49,6 @@ const Resizer = () => {
           </ReactTooltip>
         </div>
       ))}
-      {/* <img alt="Drop image to view" src={url} /> */}
     </div>
   );
 };
